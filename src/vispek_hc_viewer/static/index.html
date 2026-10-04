@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Vispek HC Viewer</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <g stroke-width="3" stroke-linecap="round">
+          <line x1="7" y1="24" x2="7" y2="15" stroke="#7c6cff"/>
+          <line x1="13" y1="24" x2="13" y2="8" stroke="#39b6ff"/>
+          <line x1="19" y1="24" x2="19" y2="11" stroke="#4fd27a"/>
+          <line x1="25" y1="24" x2="25" y2="17" stroke="#ff6b5e"/>
+        </g>
+      </svg>
+      <span class="brand-name">Vispek HC</span>
+      <span class="brand-sub">Viewer</span>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="topbar-right">
+      <span class="chip" id="uv-chip"></span>
+      <button class="button danger" id="all-off" type="button" title="Stop a running scan and switch every LED off">
+        All LEDs off
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="side left" aria-label="Device">
+      <section class="card" id="device-card">
+        <h2>Device</h2>
+        <div id="device-body"></div>
+      </section>
+      <section class="card" id="led-card">
+        <h2>Illumination <span class="card-note" id="led-note"></span></h2>
+        <div class="led-head">
+          <span>LED</span><span>PWM</span><span></span><span></span>
+        </div>
+        <div id="led-list"></div>
+      </section>
+      <section class="card" id="camera-card">
+        <h2>Camera</h2>
+        <div id="camera-body"></div>
+      </section>
+    </aside>
+
+    <section class="center">
+      <div class="tabbar">
+        <div class="tabs" role="tablist">
+          <button class="tab" id="tab-live" type="button" role="tab">Live</button>
+          <button class="tab" id="tab-capture" type="button" role="tab" disabled>Capture</button>
+        </div>
+        <div class="toolbar" id="toolbar"></div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="stage-inner" id="stage-inner">
+          <img id="picture" alt="" draggable="false">
+        </div>
+        <canvas id="overlay"></canvas>
+        <div class="stage-badge" id="stage-badge"></div>
+        <div class="stage-message" id="stage-message"></div>
+        <div class="stage-scale" id="stage-scale" hidden>
+          <img id="scale-bar" alt="" draggable="false">
+          <div class="scale-ends">
+            <span id="scale-low"></span><span id="scale-unit"></span><span id="scale-high"></span>
+          </div>
+        </div>
+        <div class="stage-tools">
+          <button class="icon-button" id="zoom-out" type="button" title="Zoom out">&minus;</button>
+          <button class="icon-button wide" id="zoom-fit" type="button" title="Fit the picture (double-click)">Fit</button>
+          <button class="icon-button wide" id="zoom-one" type="button" title="One screen pixel per picture pixel">1:1</button>
+          <button class="icon-button" id="zoom-in" type="button" title="Zoom in">+</button>
+        </div>
+      </div>
+      <div class="statusline" id="statusline">
+        <span id="status-cursor"></span>
+        <span id="status-zoom"></span>
+        <span id="status-size"></span>
+        <span class="status-hint" id="status-hint"></span>
+      </div>
+    </section>
+
+    <aside class="side right" aria-label="Analysis">
+      <section class="card" id="live-card">
+        <h2>Histogram <span class="card-note" id="histogram-note"></span></h2>
+        <canvas id="histogram" width="320" height="120"></canvas>
+        <div class="stat-grid" id="live-stats"></div>
+      </section>
+      <section class="card" id="spectrum-card">
+        <h2>Spectrum <span class="card-note" id="spectrum-note"></span></h2>
+        <div id="spectrum-chart"></div>
+        <div id="region-list"></div>
+        <div class="row-actions" id="region-actions"></div>
+      </section>
+      <section class="card" id="bands-card">
+        <h2>Bands</h2>
+        <div id="bands-body"></div>
+      </section>
+      <section class="card" id="info-card">
+        <h2>Capture</h2>
+        <div id="info-body"></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="dock">
+    <div class="acquire" id="acquire">
+      <div class="acquire-row">
+        <input class="input" id="capture-name" type="text" maxlength="64" spellcheck="false"
+               placeholder="Name (optional)" aria-label="Name of the next capture">
+        <button class="button ghost" id="options-toggle" type="button" title="Which LEDs a scan uses, averaging, the PWM search for a white reference">Channels &amp; options</button>
+      </div>
+      <div class="acquire-row">
+        <button class="button primary" id="do-scan" type="button" title="Scan every chosen LED">Scan</button>
+        <button class="button" id="do-white" type="button" title="Scan the white board and build a calibration">White reference</button>
+        <button class="button" id="do-single" type="button" title="Save the picture as it is">Frame</button>
+        <button class="button" id="do-dark" type="button" title="Save a picture with every LED off">Dark</button>
+      </div>
+      <div class="progress" id="progress" hidden>
+        <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="progress-text" id="progress-text"></div>
+        <button class="button small" id="do-stop" type="button">Stop</button>
+      </div>
+    </div>
+    <div class="library">
+      <div class="library-head">
+        <span>Captures <span class="card-note" id="library-count"></span></span>
+        <button class="button ghost small" id="library-refresh" type="button" title="Read the data folder again">Refresh</button>
+      </div>
+      <div class="library-strip" id="library-strip"></div>
+    </div>
+  </footer>
+
+  <dialog class="dialog" id="options-dialog">
+    <form method="dialog" id="options-form">
+      <h2>Scan options</h2>
+      <div class="field">
+        <span class="field-label">Channels</span>
+        <div class="channel-grid" id="channel-grid"></div>
+        <div class="row-actions">
+          <button class="button ghost small" id="channels-default" type="button">Default (5–17)</button>
+          <button class="button ghost small" id="channels-visible" type="button">Visible (5–11)</button>
+          <button class="button ghost small" id="channels-nir" type="button">Near infrared (12–17)</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <label class="field">
+          <span class="field-label">Scans to average</span>
+          <input class="input" id="option-average" type="number" min="1" max="64" step="1" value="1">
+        </label>
+        <label class="field">
+          <span class="field-label">Value per band</span>
+          <select class="input" id="option-reduction">
+            <option value="dominant">Dominant channel</option>
+            <option value="luma">Luma (legacy)</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Enclosure</span>
+          <select class="input" id="option-enclosure">
+            <option value="darkbox">Dark box</option>
+            <option value="open">Open</option>
+            <option value="unknown">Not stated</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">
+        <span class="field-label">Setup label <span class="muted">(lens, distance: stored with every capture)</span></span>
+        <input class="input" id="option-label" type="text" maxlength="120" spellcheck="false">
+      </label>
+      <fieldset class="fieldset">
+        <legend>White reference</legend>
+        <label class="check"><input id="option-auto-pwm" type="checkbox"> Search the PWM of every channel first</label>
+        <label class="check"><input id="option-calibrate" type="checkbox" checked> Build a calibration from it</label>
+        <label class="check"><input id="option-white-roi" type="checkbox"> Judge only the region drawn on the live picture <span class="muted" id="white-roi-text"></span></label>
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend>Without a parameter lock</legend>
+        <label class="check"><input id="option-unlocked" type="checkbox"> Scan although white balance and exposure cannot be confirmed fixed</label>
+      </fieldset>
+      <div class="dialog-actions">
+        <button class="button primary" value="close" type="submit">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div class="curtain" id="curtain" hidden>
+    <div class="curtain-box">
+      <h1>Vispek HC Viewer</h1>
+      <p id="curtain-text"></p>
+    </div>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
