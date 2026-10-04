@@ -37,7 +37,7 @@ jobs:
             *rc*) echo "candidate=true" >> "$GITHUB_OUTPUT" ;;
             *) echo "candidate=false" >> "$GITHUB_OUTPUT" ;;
           esac
-      - run: uv sync --no-sources --group dev
+      - run: uv sync --locked --group dev
       - run: uv run pytest
       - run: uv build
       - run: uv run twine check --strict dist/*

@@ -125,7 +125,7 @@ More in [docs/security.md](docs/security.md).
 ## Development
 
 ```bash
-uv sync --group dev      # takes ../vispek-hc-camera when it is there, PyPI otherwise: --no-sources
+uv sync --group dev      # the locked SDK release from PyPI; see AGENTS.md for an SDK checkout
 uv run pytest            # no hardware, no network
 uv run ruff format --check . && uv run ruff check . && uv run mypy
 ```

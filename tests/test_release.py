@@ -176,3 +176,16 @@ def test_the_package_description_is_made_by_the_build_hook() -> None:
     assert "custom" in project["tool"]["hatch"]["metadata"]["hooks"]
     assert "/hatch_build.py" in project["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
     assert project["project"]["urls"]["Repository"] == "https://github.com/vispek/vispek-hc-viewer"
+
+
+def test_ci_and_release_install_only_what_the_lock_file_pins() -> None:
+    # A release built from freshly resolved packages could take in a version published
+    # minutes before. Every install in the workflows goes through the lock file.
+    for name in ("ci.yml", "release.yml"):
+        text = (REPO / ".github" / "workflows" / name).read_text("utf-8")
+        syncs = re.findall(r"uv sync[^\n]*", text)
+        assert syncs and all("--locked" in line for line in syncs), name
+        assert "--no-sources" not in text, name
+    lock = (REPO / "uv.lock").read_text("utf-8")
+    sdk = re.search(r'name = "vispek-hc"\nversion = "[^"]+"\nsource = \{ ([^}]+) \}', lock)
+    assert sdk and "registry" in sdk[1], "the SDK is locked to a release on PyPI, not a path"

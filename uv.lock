@@ -1201,38 +1201,16 @@ wheels = [
 [[package]]
 name = "vispek-hc"
 version = "0.1.0"
-source = { editable = "../vispek-hc-camera" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pillow" },
     { name = "pyserial" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "matplotlib", marker = "extra == 'plot'", specifier = ">=3.8" },
-    { name = "numpy", specifier = ">=1.26" },
-    { name = "opencv-python", marker = "extra == 'opencv'", specifier = ">=4.9" },
-    { name = "pillow", specifier = ">=10.1" },
-    { name = "pyserial", specifier = ">=3.5" },
-    { name = "scikit-learn", marker = "extra == 'analysis'", specifier = ">=1.4" },
-    { name = "vispek-hc", extras = ["opencv", "plot", "analysis"], marker = "extra == 'all'" },
-]
-provides-extras = ["opencv", "plot", "analysis", "all"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "hypothesis", specifier = ">=6.100" },
-    { name = "jsonschema", specifier = ">=4.21" },
-    { name = "mypy", specifier = ">=1.11" },
-    { name = "pre-commit", specifier = ">=3.7" },
-    { name = "pytest", specifier = ">=8.2" },
-    { name = "pytest-cov", specifier = ">=5.0" },
-    { name = "pytest-timeout", specifier = ">=2.3" },
-    { name = "ruff", specifier = ">=0.6" },
-    { name = "twine", specifier = ">=6.1" },
-    { name = "types-pyserial", specifier = ">=3.5" },
+sdist = { url = "https://files.pythonhosted.org/packages/4b/42/2eca8b9869cf54bd9ec6f54dbf9ad5ed620803d6ad30e806e9627e9d404c/vispek_hc-0.1.0.tar.gz", hash = "sha256:3a16385df8b6baa40128c281d9c0b8e5a5a3df1f9a0915da4a1ef00b43d5d8c9", size = 360410, upload_time = "2026-10-04T13:30:17.517Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6e/61/80ebf7d1256ac857436cb8530bd43331c4a78ab976cd4645d9bb3510fdc4/vispek_hc-0.1.0-py3-none-any.whl", hash = "sha256:570afc8b0f5013b408a5e2bf56a92f4f8913355e37d8022513eed92a0c692c40", size = 153458, upload_time = "2026-10-04T13:30:16.454Z" },
 ]
 
 [[package]]
@@ -1259,7 +1237,7 @@ dev = [
 requires-dist = [
     { name = "numpy", specifier = ">=1.26" },
     { name = "pillow", specifier = ">=10.1" },
-    { name = "vispek-hc", editable = "../vispek-hc-camera" },
+    { name = "vispek-hc", specifier = ">=0.1.0" },
 ]
 
 [package.metadata.requires-dev]

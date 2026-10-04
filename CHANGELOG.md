@@ -14,8 +14,9 @@ CIR, UV, band, NDVI, NDWI, PCA and mean views; spectra and CSV; ENVI, TIFF and
 
 ### Added
 
-- Installed from PyPI with the SDK it needs (`pip install vispek-hc-viewer`); CI tests
-  against the SDK release on PyPI.
+- Installed from PyPI with the SDK it needs (`pip install vispek-hc-viewer`). `uv.lock`
+  pins the SDK release like every other dependency; CI and the release workflow install
+  with `--locked`.
 
 - The device state carries `gain_state`, and "locked" now also means: the gain the
   camera keeps was settled in darkness, and the stream was not reopened since. A lock

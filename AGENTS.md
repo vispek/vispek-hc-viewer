@@ -9,8 +9,9 @@ Python program serves one page on 127.0.0.1; the page shows the live picture, sw
 LEDs, records scans and white references, and shows pictures and spectra of what was
 recorded. Everything that touches the device or the data goes through the `vispek-hc`
 SDK ([vispek/vispek-hc-camera](https://github.com/vispek/vispek-hc-camera), on PyPI as
-`vispek-hc`). For development, uv takes a checkout of it at `../vispek-hc-camera` when
-there is one (`[tool.uv.sources]`); `--no-sources` takes the release from PyPI.
+`vispek-hc`). `uv.lock` pins it, like every other dependency, to a release on PyPI with
+its hashes. To work against an SDK checkout, run `uv pip install -e ../vispek-hc-camera`
+after `uv sync`; the next `uv sync` puts the locked release back.
 
 Status: pre-release (0.1). Tried on one real device on macOS. `--simulate` runs
 everything without hardware.
@@ -56,8 +57,8 @@ uv run vispek-hc-viewer --simulate --no-browser --port 0 --data-dir /tmp/data
 ```
 
 `node --check src/vispek_hc_viewer/static/app.js` is run by the tests when `node` exists.
-CI (`.github/workflows/ci.yml`) runs the same on Linux and macOS with `--no-sources`:
-against the SDK release on PyPI.
+CI (`.github/workflows/ci.yml`) runs the same on Linux and macOS with `--locked`; so does
+the release workflow, so that a release is built only with locked, hash-checked packages.
 
 ## Release
 

@@ -29,7 +29,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "vispek-hc>=0.1.0",  # from PyPI; uv takes the checkout beside this one instead
+    "vispek-hc>=0.1.0",
     "numpy>=1.26",
     "Pillow>=10.1",
 ]
@@ -50,9 +50,6 @@ dev = [
     "pytest-timeout>=2.3",
     "ruff>=0.6",
 ]
-
-[tool.uv.sources]
-vispek-hc = { path = "../vispek-hc-camera", editable = true }
 
 [tool.hatch.metadata.hooks.custom]
 
